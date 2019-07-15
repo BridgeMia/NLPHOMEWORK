@@ -36,12 +36,12 @@ class Optimizer:
     def gradient_descent(params, lr, gradient):
         """
         Gradient Descent of Single Example
-        :param params: parameter array
+        :param params: list of parameter array
         :param lr: learning rate
         :param gradient: gradient
         :return:
         """
-        return params - lr * gradient
+        return [(param - lr * gradient_vec) for param, gradient_vec in zip(params, gradient)]
     
 
 class SGD(Optimizer):
@@ -53,14 +53,58 @@ class SGD(Optimizer):
         return params
     
     
-class Softmax:
-    def __init__(self):
-        pass
+class SoftmaxClassifier:
+    """
+    Softmax classifier
+    
+    input x: vector, length is inout_dim
+    z: output of the input layer, equals [weight dot x + bias]
+    a: output of the classifier, a = softmax(z)
+    
+    """
+    def __init__(self, input_dim: tuple or int, num_classes: int, seed=1):
+        """
+        Random initialize parameters of the model
+        :param input_shape:
+        :param num_classes:
+        :param seed:
+        """
+        np.random.seed(seed)
+        self.weight = np.random.rand(input_dim*num_classes).reshape([num_classes, input_dim]),
+        self.bias = np.random.rand(num_classes)
     
     @staticmethod
-    def cross_entropy(example, params):
-        pass
-
-
+    def _batch_softmax(z):
+        """
+        softmax(z) = exp(z) / sum(exp(z)
+        :param z: batch of Vector, often the output of last layer
+        :return: batch of Vector after softmax
+        """
+        exp_z = np.exp(z)
+        return np.divide(exp_z, np.expand_dims(np.sum(exp_z, 1), 1))
+    
+    def _batch_input_out(self, batch_x):
+        return np.vstack([np.dot(self.weight, x) + self.bias for x in batch_x])
+    
+    def gradient_function(self, example):
+        """
+        Calculate the gradient vector according to input example (x, y pair)
+        :param example: tuple or list of x, y pair
+        :return: gradient vector
+        """
+        batch_x, batch_y = example
+        batch_a = self._batch_input_out(batch_x)
+        # Partial derivative Cost -> bias
+        partial_cost_partial_bias = batch_a - batch_y
+        
+        # Partial derivative Cost -> weight
+        batch_a_minus_y = batch_a - batch_y
+        partial_cost_partial_weitht = \
+            np.array([np.tensordot(minus, x, axes=0) for minus, x in zip(batch_a_minus_y, batch_x)]).\
+            mean(axis=0)
+        
+        return partial_cost_partial_weitht, partial_cost_partial_bias
+        
+    
 if __name__ == '__main__':
     pass
