@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def save_dict(dic, ofn, output0=True):
     """
     Save a dict into a txt file
@@ -47,3 +50,20 @@ def save_list(st, ofn):
     with open(ofn, "w", encoding="utf-8") as fout:
         for k in st:
             fout.write(str(k) + "\n")
+
+
+def index_divider(index_array, batch_size, size=None):
+    if not size:
+        size = len(index_array)
+    cut_size = int(size / batch_size) * batch_size
+    head = index_array[:cut_size]
+    tail = index_array[cut_size:]
+    if len(tail) > 0:
+        return np.hsplit(head, cut_size/batch_size) + [tail]
+    else:
+        return np.hsplit(head, cut_size/batch_size)
+
+
+if __name__ == '__main__':
+    arr = np.arange(1, 20)
+    print(index_divider(arr, 2))
