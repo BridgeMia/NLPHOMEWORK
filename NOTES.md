@@ -1,6 +1,13 @@
 # NOTES
 
-
+<!-- TOC -->
+- [NOTES](#notes)    
+  - [文本数据增强的方式](#文本数据增强的方式)        
+    - [文本本身](#文本本身)        
+    - [外部帮助](#外部帮助)    
+  - [Contrastive Loss和Triplet Loss的改进](#contrastive-loss和triplet-loss的改进)        
+    - [度量学习](#度量学习)
+<!-- /TOC -->
 
 ## 文本数据增强的方式
 
